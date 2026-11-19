@@ -194,8 +194,10 @@ td small { display: block; font-size: 12px; font-weight: 500; color: var(--muted
 td b { font-weight: 700; }
 th.right, td.right { text-align: right; white-space: nowrap; }
 .has-actions th:last-child, .has-actions td:last-child { position: sticky; right: 0; }
-.has-actions td:last-child { background: var(--surface); box-shadow: -10px 0 12px -12px rgba(3, 36, 68, .35); }
-.has-actions th:last-child { z-index: 6; box-shadow: -10px 0 12px -12px rgba(3, 36, 68, .35); }
+.has-actions td:last-child { background: var(--surface); }
+.has-actions th:last-child { z-index: 6; }
+/* Filet de séparation uniquement quand le tableau défile en largeur (classe posée par app.js) */
+.table-wrap.can-scroll .has-actions th:last-child, .table-wrap.can-scroll .has-actions td:last-child { border-left: 1px solid var(--line); }
 .has-actions tbody tr:hover td:last-child { background: var(--hover); }
 .row-actions { display: flex; align-items: center; justify-content: flex-end; gap: 8px; }
 input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--blue-ink); }

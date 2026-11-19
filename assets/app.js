@@ -9,6 +9,7 @@
 
   /* ---------- En-tête collé ---------- */
   function measure() {
+    $$('.table-wrap').forEach(function (w) { w.classList.toggle('can-scroll', w.scrollWidth > w.clientWidth + 1); });
     if (!head) return;
     var sticky = getComputedStyle(head).position === 'sticky';
     root.style.setProperty('--head-h', (sticky ? head.offsetHeight : 0) + 'px');
