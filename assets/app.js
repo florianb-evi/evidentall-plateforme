@@ -41,7 +41,7 @@
     aide: ['Visite guidée de cette page', 'Visite complète de la plateforme', 'Guide d’utilisation', 'Demander à Elia>messagerie.html#onglet-2'],
     lang: ['Français', 'English', 'עברית', 'Русский', 'العربية', '中文'],
     notifs: ['1 ticket critique en attente>service-client.html', '2 sites refusent la veille des prix>comparateur-prix.html', '7 créneaux 24h à valider>24h-dentaire.html'],
-    compte: ['Mon profil>parametres.html#onglet-1', 'Paramètres>parametres.html', 'Ma journée et mes absences>rh.html', '!Se déconnecter'],
+    compte: ['Paramètres>parametres.html', 'Ma journée et mes absences>rh.html', 'Affichage compact', 'Modifier le mot de passe', '!Déconnexion'],
     org: ['Votre société', 'Entité 2', 'Entité 3', 'Gérer les entités>parametres.html#onglet-3'],
     row: ['Voir le détail', 'Modifier', 'Dupliquer', 'Imprimer', '!Supprimer']
   };
@@ -252,6 +252,36 @@
     if (act === 'clear') { clearChecks(); return; }
     if (act === 'drawer-close') { drawer.classList.remove('is-on'); return; }
     if (act === 'palette') { e.preventDefault(); openPalette(); return; }
+    if (act === 'more') { var mf = $('.more-filters', el.closest('.card') || document); if (mf) { mf.hidden = !mf.hidden; measure(); } return; }
+    if (act === 'reset') {
+      var rc = el.closest('.card');
+      $$('input[type="search"], .more-filters input', rc).forEach(function (i) { i.value = ''; });
+      $$('.chips', rc).forEach(function (g) { $$('.chip', g).forEach(function (x, i) { x.setAttribute('aria-pressed', i === 0 ? 'true' : 'false'); }); });
+      $$('.filters .btn[data-options]', rc).forEach(function (b) { b.firstChild.textContent = text(b).split(' : ')[0] + ' : ' + b.dataset.options.split('|')[0]; });
+      $$('th, td', rc).forEach(function (c) { c.style.display = ''; });
+      rc.dataset.pick = '';
+      applyFilters(rc);
+      toast('Filtres réinitialisés');
+      return;
+    }
+    if (act === 'columns') {
+      e.stopPropagation();
+      var tb = $('table', el.closest('.card'));
+      if (!tb) return;
+      var ths = $$('thead th', tb);
+      var names = ths.map(function (th, i) { return [text(th), i]; }).filter(function (x) { return x[0]; });
+      openPop(el, names.map(function (x) { return (ths[x[1]].style.display === 'none' ? '☐ ' : '☑ ') + x[0]; }), function (choice) {
+        var nm = choice.slice(2), idx = names.filter(function (x) { return x[0] === nm; })[0][1];
+        var hide = ths[idx].style.display !== 'none';
+        $$('tr', tb).forEach(function (tr) { if (tr.children[idx]) tr.children[idx].style.display = hide ? 'none' : ''; });
+      });
+      return;
+    }
+    if (act === 'elia') {
+      openDrawer('Elia, votre assistant', [['Suggestions', 'Retrouver mes dernières factures · Résumer les messages · Préparer une publication']], ['Parler', 'Discuter']);
+      $('.drawer-body', drawer).insertAdjacentHTML('beforeend', '<div class="chat" style="margin-top:20px"><div class="bubble"><b>Elia</b><br>Bonjour Florian, que voulez-vous faire ?</div><div class="reply"><input aria-label="Votre demande" placeholder="Écrivez à Elia…"><button type="button" class="btn btn-primary btn-sm">Envoyer</button></div></div>');
+      return;
+    }
     if (act === 'theme') {
       var dark = root.dataset.theme !== 'dark';
       if (dark) root.dataset.theme = 'dark'; else delete root.dataset.theme;
@@ -271,6 +301,12 @@
     if (el.matches('.chips .chip, .seg button')) {
       $$('[aria-pressed]', el.parentElement).forEach(function (x) { x.setAttribute('aria-pressed', 'false'); });
       el.setAttribute('aria-pressed', 'true');
+      if (el.dataset.show) {
+        var grp = el.dataset.show.split('-')[0];
+        $$('[data-view^="' + grp + '-"]').forEach(function (v) { v.hidden = v.dataset.view !== el.dataset.show; });
+        return;
+      }
+      if (byLabel[lab]) { byLabel[lab].showModal(); return; }
       var c = el.closest('.card');
       if (c) applyFilters(c);
       return;
@@ -284,7 +320,9 @@
         if (el.dataset.menu === 'lang') { $('span', el).textContent = { 'Français': 'FR', 'English': 'EN', 'עברית': 'HE', 'Русский': 'RU', 'العربية': 'AR', '中文': 'ZH' }[choice]; toast('Langue : ' + choice); return; }
         if (el.dataset.menu === 'org') { $('b', el).textContent = choice; toast('Société active : ' + choice); return; }
         var tr = el.closest('tr'), ref = tr && $('a', tr);
-        if (choice === 'Voir le détail' && ref) { rowDrawer(ref); return; }
+        if (el.classList.contains('status-pick')) { el.textContent = choice; toast('Statut : ' + choice + (ref ? ' · ' + text(ref) : '') + ' (simulation)'); return; }
+        if (byLabel[choice]) { var cx = $('[data-context]', byLabel[choice]); if (cx) cx.textContent = ref ? text(ref) : ''; byLabel[choice].showModal(); return; }
+        if ((choice === 'Voir le détail' || choice === 'Voir' || /^Ouvrir la commande/.test(choice)) && ref) { rowDrawer(ref); return; }
         toast(choice + (ref ? ' · ' + text(ref) : '') + ' (simulation)');
       });
       return;
@@ -292,7 +330,7 @@
     if (el.matches('.filters .btn') && lab.indexOf(' : ') !== -1) {
       e.stopPropagation();
       var name = lab.split(' : ')[0], cur = lab.split(' : ')[1];
-      openPop(el, OPTIONS[name] || ['tous', 'toutes'], function (choice) {
+      openPop(el, el.dataset.options ? el.dataset.options.split('|') : (OPTIONS[name] || ['tous', 'toutes']), function (choice) {
         el.firstChild.textContent = name + ' : ' + choice;
         var card = el.closest('.card');
         if (!card) return;

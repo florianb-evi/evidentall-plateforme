@@ -15,7 +15,8 @@ Ouvrez `index.html` dans un navigateur : aucune installation n'est nécessaire. 
 | Action principale de la page (une seule, bleu marine) | En haut à droite de l'en-tête de page | Oui : l'en-tête reste sous la barre supérieure et se compacte au défilement |
 | Actions secondaires (Exporter, Importer, Imprimer) | À gauche de l'action principale, en contour | Oui, avec l'en-tête |
 | Onglets de la page | Sous le titre, dans l'en-tête | Oui, avec l'en-tête |
-| En-tête des tableaux | Juste sous l'en-tête de page | Oui sur ordinateur, non en dessous de 1100 px (défilement horizontal) |
+| En-tête des tableaux | En haut du tableau | Oui : le tableau défile dans son cadre, l'en-tête reste visible |
+| Colonne d'actions d'un tableau | Dernière colonne | Oui : collée à droite quand le tableau est plus large que l'écran |
 | Prochaine action d'une ligne (Expédier, Relancer…) | Dernière colonne, une seule action visible, le reste dans le menu « … » | Non |
 | Actions groupées | Barre flottante en bas de l'écran | Oui, mais seulement quand des lignes sont cochées |
 | Valider un formulaire | Barre en bas de l'écran, avec le total et « Enregistrer le brouillon » | Oui |
@@ -33,13 +34,14 @@ Sur mobile (moins de 900 px), le menu devient un tiroir et l'action principale d
 | --- | --- | --- |
 | `index.html` | Tableau de bord | Nouvelle commande |
 | `statistiques.html` | Statistiques | Aucune (page de consultation) |
-| `messagerie.html` | Messagerie (ex-Cockpit) | Nouveau message |
+| `messagerie.html` | Cockpit | Nouveau message |
+| `partenariats.html` | Partenariats | Inviter un partenaire |
 | `ventes.html` | Ventes | Nouvelle commande |
 | `commande-nouvelle.html` | Formulaire de commande | Valider la commande (barre du bas) |
 | `clients.html` | Clients | Nouveau client |
 | `prospection.html` | Prospection | Nouvelle interaction |
 | `service-client.html` | Service client | Nouveau ticket |
-| `produits.html` | Produits et stock | Nouveau produit |
+| `produits.html` | Produits | Nouveau produit |
 | `comparateur-prix.html` | Comparateur de prix | Relancer la veille |
 | `catalogues-partenaires.html` | Catalogues partenaires | Peupler les catalogues |
 | `24h-dentaire.html` | 24h Dentaire | Valider les créneaux en attente |
@@ -47,14 +49,14 @@ Sur mobile (moins de 900 px), le menu devient un tiroir et l'action principale d
 | `expeditions.html` | Expéditions | Nouvelle expédition |
 | `ramassage.html` | Ramassage | Nouveau ramassage |
 | `locations.html` | Locations | Nouveau contrat |
-| `documents.html` | Documents (ex-GED) | Ajouter un document |
+| `documents.html` | GED — Documents | Ajouter un document |
 | `rh.html` | Ressources humaines | Démarrer ma journée |
 
 ## Organisation du code
 
 - `assets/app.css` : couleurs de la charte, composants et règles de collage (`position: sticky`). Les variables sont en tête du fichier.
 - `assets/app.js` : en-tête compact au défilement, barre d'actions groupées, menu réductible, raccourci Ctrl K.
-- `tools/extra.py` : onglets secondaires, fenêtres de création, fiche client et paramètres.
+- `tools/pages.py`, `tools/pages2.py` : contenu des pages. `tools/extra.py` : fenêtres et onglets secondaires. `tools/couverture.py` : contrôle de l'inventaire.
 - `tools/build.py` : génère les pages. Le menu, la barre supérieure et l'en-tête sont définis une seule fois ; modifiez ce fichier puis lancez `python3 tools/build.py`.
 
 ## Charte
@@ -85,17 +87,11 @@ Pages ajoutées : `parametres.html` (12 onglets) et `client-fiche.html` (fiche c
 
 Test automatique : `python3` + Playwright cliquent chaque élément visible de chaque page et de chaque onglet (1 214 clics) ; aucun n'est resté sans effet, hors éléments déjà actifs.
 
-## Constats relevés sur la plateforme actuelle
+## Inventaire
 
-- `/billing` ouvert sans paramètre affiche « Impossible d'afficher la page » ; seul le lien du tableau de bord, avec ses paramètres, fonctionne.
-- Les onglets de Produits et d'Expéditions sont de simples boutons, contrairement aux autres modules : le clavier et les lecteurs d'écran ne les traitent pas comme des onglets.
-- L'onglet Factures affiche six boutons d'action de même poids (fusion PDF, résumé des impayés, envoi des impayés, statistiques, export, envoi de la sélection). La maquette en garde deux en évidence et passe le reste en actions groupées.
-- Les tableaux d'Achats ont un filtre « Contient / Égal à » dans chaque en-tête de colonne. La maquette les remplace par une recherche et des pastilles de statut.
-- Le Comparateur de prix affiche les erreurs techniques brutes (HTTP 403, adresses complètes). La maquette les résume en une phrase avec un bouton « Voir le détail technique ».
-- Les Paramètres comptent 12 onglets sur deux lignes ; la maquette les met sur une ligne défilante.
+Voir `AUDIT.md` : toutes les fonctions relevées sur la plateforme sont présentes dans la maquette, rangées au bon endroit plutôt que supprimées. Les noms d'origine des modules sont conservés (Cockpit, GED, Prospections et suivis…).
 
 ## Limites
 
-- Les formulaires de création n'ont pas été ouverts sur la plateforme réelle, pour ne créer aucun brouillon : leurs champs sont déduits des colonnes des tableaux et restent à valider.
+- Les écrans non relevés sont listés à la fin de `AUDIT.md`.
 - Les données sont fictives et les actions simulées.
-- Les renommages (Cockpit → Messagerie, GED → Documents, Produits → Produits et stock) sont des propositions.

@@ -11,6 +11,10 @@ def register(h):
 
     # ---------- Fenêtres de création ----------
     def field(spec):
+        if spec.startswith('#'):
+            return f'<h3 class="full sec">{spec[1:].strip()}</h3>'
+        if spec.startswith('?'):
+            return f'<label class="field full check"><input type="checkbox"> <span>{spec[1:].strip()}</span></label>'
         full = spec.endswith('~') or spec.endswith('=')
         area = spec.endswith('~')
         spec = spec.rstrip('~=')
@@ -91,6 +95,7 @@ def register(h):
     modal('expedier', ['Expédier', 'Marquer expédiée', 'Expédier le reliquat'], 'Expédier la commande', ['Transporteur|Transporteur 24 h,Coursier', 'N° de suivi', 'Prévenir le client par e-mail|Oui,Non'], 'Confirmer l’expédition', 'Commande expédiée (simulation)', 'Commande :')
     modal('reception', ['Réceptionner'], 'Réceptionner la commande', ['Réception|Complète,Partielle', 'Date de réception@date', 'Écarts constatés~'], 'Valider la réception', 'Réception enregistrée, stock mis à jour (simulation)', 'Commande :')
 
+    h.update(modal=modal, field=field)
     # ---------- Petites briques ----------
     def lst(search, cols, rows, sel=(), check=False, foot=None, chip=None):
         bar = (chips(chip) if chip else '') + filters(search, sel, more=False)
@@ -103,6 +108,7 @@ def register(h):
         return card(head(title, action) + '<div class="list" style="gap:14px">' + ''.join(
             f'<div><div class="total-line"><span>{n}</span><b class="num">{v}</b></div>{meter(p)}</div>' for n, v, p in rows) + '</div>')
 
+    h.update(lst=lst, ref=ref, meters=meters)
     C = ['Dr Camille Renaud', 'Cabinet dentaire des Lilas', 'Centre dentaire Voltaire', 'Laboratoire Prothésia', 'SCM Dentaire du Parc', 'SELARL Morel et Associés']
 
     # ---------- Ventes ----------

@@ -122,7 +122,7 @@ h1 { font-size: 28px; font-weight: 700; letter-spacing: -0.02em; transition: fon
 .field.wide { flex: 2 1 260px; }
 .input, .field select, .field input, .field textarea { height: 44px; width: 100%; padding: 0 14px; border: 1px solid var(--line-strong); border-radius: var(--radius-sm); background: var(--surface); font-weight: 500; color: var(--ink); }
 .field textarea { height: 96px; padding: 12px 14px; resize: vertical; }
-.seg { display: inline-flex; padding: 4px; gap: 2px; border-radius: var(--radius-sm); background: var(--chip-bg); }
+.seg { display: inline-flex; flex-wrap: wrap; padding: 4px; gap: 2px; border-radius: var(--radius-sm); background: var(--chip-bg); }
 .seg button { height: 36px; padding: 0 14px; border: 0; border-radius: 9px; background: transparent; font-size: 13px; font-weight: 600; color: var(--ink-2); cursor: pointer; }
 .seg button[aria-pressed="true"] { background: var(--surface); box-shadow: 0 1px 2px rgba(3, 36, 68, .14); font-weight: 700; color: var(--ink); }
 
@@ -179,10 +179,10 @@ h2 { font-size: 17px; font-weight: 700; }
 .split { display: flex; gap: 4px; height: 14px; }
 .split i { border-radius: 4px; }
 
-/* ---------- Tableaux : en-tête collé sous l'en-tête de page ---------- */
-.table-wrap { overflow: visible; }
+/* ---------- Tableaux : défilement interne, en-tête collé en haut et colonne d'actions collée à droite ---------- */
+.table-wrap { overflow: auto; max-height: calc(100vh - var(--top-h) - var(--head-h) - 32px); border-radius: 0 0 var(--radius) var(--radius); }
 table { width: 100%; border-collapse: separate; border-spacing: 0; }
-th { position: sticky; top: calc(var(--top-h) + var(--head-h)); z-index: 5; padding: 12px 10px; background: var(--soft); border-bottom: 1px solid var(--line); font-size: 13px; font-weight: 700; color: var(--ink-2); text-align: left; white-space: nowrap; }
+th { position: sticky; top: 0; z-index: 5; padding: 12px 10px; background: var(--soft); border-bottom: 1px solid var(--line); font-size: 13px; font-weight: 700; color: var(--ink-2); text-align: left; white-space: nowrap; }
 td { padding: 14px 10px; border-top: 1px solid var(--row-line); vertical-align: middle; }
 tbody tr:first-child td { border-top: 0; }
 tbody tr:hover td { background: var(--hover); }
@@ -191,6 +191,10 @@ th:last-child, td:last-child { padding-right: 20px; }
 td small { display: block; font-size: 12px; font-weight: 500; color: var(--muted); white-space: nowrap; }
 td b { font-weight: 700; }
 th.right, td.right { text-align: right; white-space: nowrap; }
+.has-actions th:last-child, .has-actions td:last-child { position: sticky; right: 0; }
+.has-actions td:last-child { background: var(--surface); box-shadow: -10px 0 12px -12px rgba(3, 36, 68, .35); }
+.has-actions th:last-child { z-index: 6; box-shadow: -10px 0 12px -12px rgba(3, 36, 68, .35); }
+.has-actions tbody tr:hover td:last-child { background: var(--hover); }
 .row-actions { display: flex; align-items: center; justify-content: flex-end; gap: 8px; }
 input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--blue-ink); }
 .pager { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 20px; border-top: 1px solid var(--line); font-size: 13px; color: var(--muted); }
@@ -268,6 +272,20 @@ tr[hidden] { display: none; }
 .bubble.me { align-self: flex-end; background: var(--info-bg); }
 code { padding: 2px 6px; border-radius: 6px; background: var(--neutral-bg); font-size: 12px; }
 
+/* ---------- Formulaires longs, filtres avancés ---------- */
+.sec { margin: 8px 0 0; padding-top: 16px; border-top: 1px solid var(--line); font-size: 14px; font-weight: 700; color: var(--ink); }
+.modal-body > .sec:first-child, .form-grid > .sec:first-child { margin-top: 0; padding-top: 0; border-top: 0; }
+.field.check { flex-direction: row; align-items: center; gap: 10px; font-weight: 500; }
+.field.check input { width: 18px; height: 18px; flex: none; }
+.more-filters { padding: 16px; border: 1px dashed var(--line-strong); border-radius: 14px; background: var(--soft); }
+.more-filters[hidden] { display: none; }
+.status-pick { border: 0; cursor: pointer; font: inherit; font-size: 12px; font-weight: 700; }
+.status-pick::after { content: "▾"; margin-left: 2px; }
+details > summary { cursor: pointer; list-style-position: inside; }
+label.item { cursor: pointer; }
+[data-view][hidden] { display: none; }
+pre { font-family: ui-monospace, monospace; }
+
 /* ---------- Mode nuit ----------
    Activé par <html data-theme="dark"> (bouton lune de la barre supérieure, choix mémorisé). */
 [data-theme="dark"] {
@@ -304,6 +322,7 @@ code { padding: 2px 6px; border-radius: 6px; background: var(--neutral-bg); font
 [data-theme="dark"] .card, [data-theme="dark"] .kpi { background: linear-gradient(180deg, #0E1B30 0%, #0A1422 100%); }
 [data-theme="dark"] .card { box-shadow: inset 0 1px 0 rgba(255, 255, 255, .05), 0 20px 40px -30px rgba(0, 119, 253, .45); }
 [data-theme="dark"] .kpis { background: var(--line); }
+[data-theme="dark"] .has-actions td:last-child { background: #0B1525; }
 [data-theme="dark"] .nav a[aria-current="page"] { background: linear-gradient(90deg, rgba(0, 119, 253, .42), rgba(0, 119, 253, .08)); box-shadow: inset 0 0 0 1px rgba(80, 195, 255, .28); color: #fff; }
 [data-theme="dark"] .nav a[aria-current="page"] svg { color: var(--sky); }
 [data-theme="dark"] .btn-primary { border-color: #3D95F5; box-shadow: 0 0 0 1px rgba(80, 195, 255, .25), 0 10px 26px -10px rgba(0, 119, 253, .9); }
@@ -344,8 +363,6 @@ code { padding: 2px 6px; border-radius: 6px; background: var(--neutral-bg); font
 
 /* ---------- Écrans étroits ---------- */
 @media (max-width: 1100px) {
-  .table-wrap { overflow-x: auto; }
-  th { position: static; }
   table { min-width: 860px; }
   .mail { grid-template-columns: 1fr; }
   .mail > * { border-right: 0; border-bottom: 1px solid var(--line); }
