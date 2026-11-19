@@ -40,8 +40,9 @@ svg.i { width: 18px; height: 18px; flex: none; fill: none; stroke: currentColor;
 /* ---------- Structure ---------- */
 .app { display: grid; grid-template-columns: 264px minmax(0, 1fr); min-height: 100vh; }
 .side { position: sticky; top: 0; height: 100vh; overflow-y: auto; background: var(--surface); border-right: 1px solid var(--line); padding: 20px 14px 16px; display: flex; flex-direction: column; gap: 16px; }
-.logo { padding: 4px 12px; font-size: 24px; font-weight: 800; letter-spacing: -0.02em; color: var(--navy); }
-.logo span { color: var(--blue); }
+.logo { display: block; padding: 2px 10px; }
+.logo img { display: block; width: 100%; max-width: 196px; height: auto; }
+.logo .mark { display: none; }
 .org { display: flex; align-items: center; gap: 10px; min-height: 48px; padding: 6px 12px; border: 1px solid var(--line); border-radius: var(--radius-sm); background: var(--ground); text-align: left; cursor: pointer; }
 .org b { display: block; font-size: 13px; }
 .org small { display: block; font-size: 11px; color: var(--muted); }
@@ -225,9 +226,9 @@ input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--blue-ink
 /* ---------- Menu réduit ---------- */
 .app.is-collapsed { grid-template-columns: 76px minmax(0, 1fr); }
 .is-collapsed .side { padding-inline: 10px; }
-.is-collapsed .nav-label, .is-collapsed .nav a span, .is-collapsed .nav .count, .is-collapsed .org span, .is-collapsed .logo span { display: none; }
-.is-collapsed .logo { padding-inline: 0; text-align: center; font-size: 0; }
-.is-collapsed .logo::before { content: "e"; font-size: 26px; }
+.is-collapsed .nav-label, .is-collapsed .nav a span, .is-collapsed .nav .count, .is-collapsed .org span, .is-collapsed .logo .full { display: none; }
+.is-collapsed .logo { padding-inline: 0; }
+.is-collapsed .logo .mark { display: block; width: 40px; margin-inline: auto; }
 .is-collapsed .nav a, .is-collapsed .org { justify-content: center; padding-inline: 0; }
 
 /* ---------- Écrans étroits ---------- */

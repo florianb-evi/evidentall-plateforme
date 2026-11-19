@@ -58,6 +58,7 @@ Sur mobile (moins de 900 px), le menu devient un tiroir et l'action principale d
 
 ## Charte
 
+- Logo : `assets/logo-bleus.svg` sur fond clair (utilisé dans le menu), `assets/logo-blanc-bleu.svg` sur fond bleu ou bleu marine. Ce sont vos fichiers d'origine, recadrés au plus près du dessin. `assets/logo-symbole.svg` est un recadrage sur « all » et le sourire, pour le menu réduit et l'icône d'onglet.
 - Principale `#0077FD`, secondaire `#032444`, accompagnante `#50C3FF`, police Montserrat.
 - Le bouton principal est en bleu marine `#032444` : le texte blanc sur `#0077FD` n'atteint pas le contraste recommandé pour du texte courant. Le bleu `#0077FD` sert aux graphiques, aux onglets actifs et aux accents.
 - Vert, orange et rouge sont réservés aux statuts (payé, à valider, en retard) et toujours accompagnés d'un libellé.

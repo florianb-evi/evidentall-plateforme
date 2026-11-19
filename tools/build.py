@@ -206,13 +206,14 @@ def shell(slug, title, sub, actions, body, tab_html='', back=None):
 <title>{title} · Evidentall</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap">
+<link rel="icon" type="image/svg+xml" href="assets/logo-symbole.svg">
 <link rel="stylesheet" href="assets/app.css">
 </head>
 <body>
 <a class="sr" href="#contenu">Aller au contenu</a>
 <div class="app">
 <aside class="side">
-<a class="logo" href="index.html" aria-label="Evidentall, tableau de bord">evident<span>all</span></a>
+<a class="logo" href="index.html" aria-label="Evidentall, tableau de bord"><img class="full" src="assets/logo-bleus.svg" alt="Evidentall, le pilotage intelligent" width="196" height="57"><img class="mark" src="assets/logo-symbole.svg" alt="" width="40" height="44"></a>
 <button type="button" class="org">{ico("globe")}<span><small>Société active</small><b>Votre société</b></span></button>
 <nav class="nav" aria-label="Navigation principale" style="display:flex;flex-direction:column;gap:16px">{nav}</nav>
 <div class="side-foot nav">
