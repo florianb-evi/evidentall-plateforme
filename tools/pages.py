@@ -108,7 +108,13 @@ def register(h):
          + more_btn(['Guide d’utilisation', 'Personnaliser', 'Partenariats : cabinets>partenariats.html', 'Partenariats : laboratoires>partenariats.html#onglet-1'])
          + f'<button type="button" class="btn" data-menu="Produit>produits.html|Vente>commande-nouvelle.html|Achat>achats.html|Client>clients.html|Point de vente>ventes.html#onglet-5">{ico("plus")}<span>Créer</span></button>'
          + btn('Nouvelle commande', 'primary', 'plus', 'commande-nouvelle.html'),
-         kpis([('CA du jour', '2 919 €', 'TTC 3 228 € · 15 commandes'), ('CA HT de la période', '128 400 €', '<span class="up">+8,3 %</span> vs période préc. · TTC 141 200 €'),
+         card(head('Que voulez-vous faire ?', '<span class="small muted">Ou tapez Ctrl K pour chercher une page, un client, une commande</span>') + '<div class="chips">' + ''.join(
+             f'<a class="chip" href="{u}">{ico(i)}{t}</a>' for t, u, i in [
+                 ('Créer une commande', 'commande-nouvelle.html', 'plus'), ('Faire un devis', 'ventes.html#onglet-0', 'plus'), ('Vendre au comptoir', 'ventes.html#onglet-5', 'pos'),
+                 ('Encaisser une facture', 'ventes.html#onglet-3', 'check'), ('Relancer un impayé', 'ventes.html#onglet-3', 'alert'), ('Préparer et expédier', 'expeditions.html', 'truck'),
+                 ('Ajouter un client', 'clients.html', 'users'), ('Ajouter un produit', 'produits.html', 'box'), ('Voir le stock', 'produits.html#onglet-1', 'box'),
+                 ('Commander à un fournisseur', 'achats.html', 'bag'), ('Répondre à un ticket', 'service-client.html', 'headset'), ('Planifier un ramassage', 'ramassage.html', 'pin')]) + '</div>')
+         + kpis([('CA du jour', '2 919 €', 'TTC 3 228 € · 15 commandes'), ('CA HT de la période', '128 400 €', '<span class="up">+8,3 %</span> vs période préc. · TTC 141 200 €'),
                ('Encaissements', '112 900 €', '<span class="up">+3,0 %</span> · 359 règlements, 1 260 € remboursés'),
                ('Impayés (encours)', '96 300 €', '736 factures · 0–30 j 39 400 € · 31–60 j 16 500 € · 61–90 j 3 300 € · <span class="late">&gt; 90 j 37 100 €</span>'),
                ('Commandes et panier moyen', '450', '<span class="down">−5,6 %</span> · panier moyen HT 315 € · 426 factures')])

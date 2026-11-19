@@ -119,9 +119,16 @@
   var palette = dialogEl('', '<form method="dialog"><div style="padding:16px 16px 0"><label class="search" style="max-width:none">' +
     '<input type="search" aria-label="Rechercher une page ou une action" placeholder="Aller à une page, un client, une commande…"></label></div>' +
     '<nav class="palette-list" aria-label="Résultats"></nav></form>');
-  var links = $$('.side .nav a[href$=".html"]').map(function (a) { return [text(a).replace(/\d+$/, '').trim(), a.getAttribute('href')]; });
-  links.push(['Nouvelle commande', 'commande-nouvelle.html'], ['Point de vente', 'ventes.html#onglet-5'], ['Fiche client : Dr Camille Renaud', 'client-fiche.html'], ['Factures', 'ventes.html#onglet-3']);
-  $('.palette-list', palette).innerHTML = links.map(function (l) { return '<a href="' + l[1] + '">' + l[0] + '</a>'; }).join('');
+  var links = $$('.side .nav a[href$=".html"]').map(function (a) { return [text(a).replace(/\d+$/, '').trim(), a.getAttribute('href'), a.dataset.desc || '']; });
+  // Recherche par intention : ce que l'on veut faire, avec les mots que l'on taperait
+  links.push(
+    ['Créer une commande', 'commande-nouvelle.html', 'nouvelle vente'], ['Faire un devis', 'ventes.html#onglet-0', 'proposition commerciale'],
+    ['Encaisser une facture', 'ventes.html#onglet-3', 'règlement paiement'], ['Relancer un impayé', 'ventes.html#onglet-3', 'facture échue retard de paiement'],
+    ['Factures', 'ventes.html#onglet-3', 'ventes'], ['Avoirs et retours', 'ventes.html#onglet-4', 'remboursement'], ['Point de vente', 'ventes.html#onglet-5', 'caisse comptoir'],
+    ['Préparer un colis', 'expeditions.html', 'expédier étiquette suivi'], ['Voir le stock', 'produits.html#onglet-1', 'lots inventaire rupture'],
+    ['Commander à un fournisseur', 'achats.html', 'réapprovisionner achat'], ['Pointer, poser un congé', 'rh.html', 'absence horaires'],
+    ['Ajouter un utilisateur', 'parametres.html#onglet-1', 'droits accès'], ['Fiche client : Dr Camille Renaud', 'client-fiche.html', 'exemple'], ['Paramètres', 'parametres.html', 'réglages société']);
+  $('.palette-list', palette).innerHTML = links.map(function (l) { return '<a href="' + l[1] + '">' + l[0] + '<small>' + l[2] + '</small></a>'; }).join('');
   function filterPalette() {
     var q = norm($('input', palette).value), first = true;
     $$('.palette-list a', palette).forEach(function (a) {

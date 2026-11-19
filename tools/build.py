@@ -45,7 +45,8 @@ ICONS = {
     'play': 'M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM10 8.5l5 3.5-5 3.5z',
     'menu': 'M4 7h16M4 12h16M4 17h16',
     'panel': 'M4 5h16v14H4zM9 5v14M15 10l-2 2 2 2',
-    'gear': 'M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM4 12h2M18 12h2M12 4v2M12 18v2M6.3 6.3l1.4 1.4M16.3 16.3l1.4 1.4M6.3 17.7l1.4-1.4M16.3 7.7l1.4-1.4',
+    'gear': 'M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM19 12a7 7 0 0 0-.1-1.2l2-1.5-2-3.4-2.3.9a7 7 0 0 0-2.1-1.2L14 3h-4l-.5 2.6a7 7 0 0 0-2.1 1.2l-2.3-.9-2 3.4 2 1.5a7 7 0 0 0 0 2.4l-2 1.5 2 3.4 2.3-.9a7 7 0 0 0 2.1 1.2L10 21h4l.5-2.6a7 7 0 0 0 2.1-1.2l2.3.9 2-3.4-2-1.5A7 7 0 0 0 19 12z',
+    'chat': 'M4 5h16v11H10l-5 4v-4H4z',
     'pos': 'M3 6h18v12H3zM3 10h18M7 15h3',
     'send': 'M4 12l16-8-6 16-3-6z',
     'filter': 'M4 6h16M7 12h10M10 18h4',
@@ -77,6 +78,18 @@ NAV = [
     ('Équipe et documents', [('rh', 'Ressources humaines', 'team', 'rh.html', '', ''),
                              ('docs', 'GED — Documents', 'folder', 'documents.html', '', '')]),
 ]
+
+
+# Ce que l'on trouve dans chaque module : affiché au survol du menu et dans la recherche (Ctrl K)
+DESC = {
+    'dashboard': 'vue d’ensemble, alertes du jour et chiffres clés', 'stats': 'chiffre d’affaires, commerciaux, objectifs, charges',
+    'mail': 'courrier, outils, assistant Elia, réseaux sociaux', 'ventes': 'devis, commandes, bons de livraison, factures, avoirs, caisse',
+    'clients': 'fiches clients, encours, tags', 'prospection': 'prospects, relances et suivi commercial', 'partenariats': 'cabinets et laboratoires partenaires',
+    'sav': 'tickets d’intervention et de SAV', 'produits': 'catalogue, prix, stock, lots, référentiels', 'prix': 'veille des prix concurrents et recommandations',
+    'partenaires': 'import des catalogues fournisseurs', '24h': 'une promotion flash par heure sur la boutique', 'achats': 'commandes et factures fournisseurs',
+    'expeditions': 'colis, reliquats, retours, retards', 'ramassage': 'tournées de récupération chez les clients', 'locations': 'contrats de location et prélèvements',
+    'rh': 'pointage, absences, recrutement', 'docs': 'dossiers, conventions, attestations, procédures',
+}
 
 
 # ---------- Briques ----------
@@ -218,7 +231,7 @@ def shell(slug, title, sub, actions, body, tab_html='', back=None, file=None):
         for sid, lab, icon, href, count, alert in items:
             cur = ' aria-current="page"' if sid == slug else ''
             cnt = f'<b class="count {alert}">{count}</b>' if count else ''
-            links += f'<a href="{href}"{cur} title="{lab}">{ico(icon)}<span>{lab}</span>{cnt}</a>'
+            links += f'<a href="{href}"{cur} title="{lab} : {DESC.get(sid, lab)}" data-desc="{DESC.get(sid, "")}">{ico(icon)}<span>{lab}</span>{cnt}</a>'
         nav += f'<div class="nav-group"><div class="nav-label">{label}</div>{links}</div>'
     backlink = f'<a href="{back[1]}" class="small" style="display:inline-flex;align-items:center;gap:4px">{ico("back")}{back[0]}</a>' if back else ''
     return f'''<!doctype html>
@@ -251,7 +264,7 @@ def shell(slug, title, sub, actions, body, tab_html='', back=None, file=None):
 <label class="search" data-action="palette">{ico("search")}<input type="search" aria-label="Rechercher dans Evidentall" placeholder="Rechercher un client, une commande, un produit…"><span class="kbd hide-sm">Ctrl K</span></label>
 <span class="spacer"></span>
 <button type="button" class="btn hide-sm" data-action="clock">{ico("play")}<span>Démarrer ma journée</span></button>
-<button type="button" class="btn hide-sm" data-action="elia">{ico("send")}<span>Elia</span></button>
+<button type="button" class="btn hide-sm" data-action="elia" title="Elia, votre assistant : posez une question ou demandez une action">{ico("chat")}<span>Elia</span></button>
 <button type="button" class="btn hide-sm" data-menu="aide">{ico("help")}<span>Aide</span></button>
 <button type="button" class="btn hide-sm" data-menu="lang" aria-label="Langue : français">{ico("globe")}<span>FR</span></button>
 <button type="button" class="btn btn-icon" data-action="theme" aria-label="Activer le mode nuit" title="Mode nuit"><span class="when-light">{ico("moon")}</span><span class="when-dark">{ico("sun")}</span></button>

@@ -113,6 +113,8 @@ h1 { font-size: 28px; font-weight: 700; letter-spacing: -0.02em; transition: fon
 .chips { display: flex; flex-wrap: wrap; gap: 8px; }
 .chip { display: inline-flex; align-items: center; gap: 8px; height: 38px; padding: 0 14px; border: 1px solid var(--line-strong); border-radius: 999px; background: var(--surface); color: var(--ink-2); font-size: 13px; font-weight: 600; cursor: pointer; }
 .chip b { color: var(--muted); }
+a.chip:hover { border-color: var(--blue-ink); color: var(--blue-ink); }
+.palette-list small { margin-left: auto; font-weight: 500; color: var(--muted); text-align: right; }
 .chip[aria-pressed="true"] { border-color: var(--navy); background: var(--navy); color: #fff; }
 .chip[aria-pressed="true"] b { color: #BFD9F5; }
 .chip.alert { border-color: var(--danger-line); background: var(--danger-bg); color: var(--danger-fg); }
