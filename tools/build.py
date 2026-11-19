@@ -5,7 +5,13 @@ Usage : python3 tools/build.py
 Le menu, la barre supérieure et l'en-tête de page sont définis une seule fois ici ;
 chaque page ne décrit que son contenu. Toutes les données affichées sont fictives.
 """
+import re
+import sys
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+EXTRA = {}   # onglets secondaires par page, remplis par extra.py
+MODALS = {}  # fenêtres de création, incluses dans les pages qui en ont besoin
 
 ROOT = Path(__file__).resolve().parent.parent
 
@@ -110,9 +116,10 @@ def tabs(items, active=0):
     out = ''
     for i, it in enumerate(items):
         label, count = it if isinstance(it, tuple) else (it, '')
-        cur = ' aria-current="true"' if i == active else ''
-        out += f'<a href="#"{cur}>{label}{f"<span class=count>{count}</span>" if count else ""}</a>'
-    return f'<nav class="tabs" aria-label="Sections de la page">{out}</nav>'
+        cur = 'true' if i == active else 'false'
+        out += (f'<button type="button" role="tab" data-tab="{i}" aria-selected="{cur}">{label}'
+                f'{f"<span class=count>{count}</span>" if count else ""}</button>')
+    return f'<div class="tabs" role="tablist" aria-label="Sections de la page">{out}</div>'
 
 
 def chips(items, label='Filtrer par statut'):
@@ -188,7 +195,16 @@ def item(title, small, right='', tone='', icon=None, soft=False):
 
 
 # ---------- Gabarit ----------
-def shell(slug, title, sub, actions, body, tab_html='', back=None):
+def shell(slug, title, sub, actions, body, tab_html='', back=None, file=None):
+    ex = EXTRA.get(file, {})
+    found = re.search(r'data-tab="(\d+)" aria-selected="true"', tab_html)
+    act = int(found.group(1)) if found else 0
+    prim = lambda i: f' data-primary="{ex["primary"][i]}"' if i in ex.get('primary', {}) else ''
+    body = f'<section class="panel stack" data-panel="{act}"{prim(act)}>{body}</section>'
+    for i, html in sorted(ex.get('panels', {}).items()):
+        body += f'<section class="panel stack" data-panel="{i}"{prim(i)} hidden>{html}</section>'
+    body_all = body + actions
+    dialogs = ''.join(html for labels, html in MODALS.values() if any(f'>{l}<' in body_all or f'="{l}"' in body_all for l in labels))
     nav = ''
     for label, items in NAV:
         links = ''
@@ -214,23 +230,23 @@ def shell(slug, title, sub, actions, body, tab_html='', back=None):
 <div class="app">
 <aside class="side">
 <a class="logo" href="index.html" aria-label="Evidentall, tableau de bord"><img class="full" src="assets/logo-bleus.svg" alt="Evidentall, le pilotage intelligent" width="196" height="57"><img class="mark" src="assets/logo-symbole.svg" alt="" width="40" height="44"></a>
-<button type="button" class="org">{ico("globe")}<span><small>Société active</small><b>Votre société</b></span></button>
+<button type="button" class="org" data-menu="org">{ico("globe")}<span><small>Société active</small><b>Votre société</b></span></button>
 <nav class="nav" aria-label="Navigation principale" style="display:flex;flex-direction:column;gap:16px">{nav}</nav>
 <div class="side-foot nav">
-<a href="#" title="Paramètres">{ico("gear")}<span>Paramètres</span></a>
+<a href="parametres.html" title="Paramètres">{ico("gear")}<span>Paramètres</span></a>
 <a href="#" data-action="collapse" title="Réduire le menu">{ico("panel")}<span>Réduire le menu</span></a>
 </div>
 </aside>
 <div class="main">
 <header class="topbar">
 <button type="button" class="btn btn-icon menu-btn" data-action="menu" aria-label="Ouvrir le menu">{ico("menu")}</button>
-<label class="search">{ico("search")}<input type="search" aria-label="Rechercher dans Evidentall" placeholder="Rechercher un client, une commande, un produit…"><span class="kbd hide-sm">Ctrl K</span></label>
+<label class="search" data-action="palette">{ico("search")}<input type="search" aria-label="Rechercher dans Evidentall" placeholder="Rechercher un client, une commande, un produit…"><span class="kbd hide-sm">Ctrl K</span></label>
 <span class="spacer"></span>
-<a class="btn hide-sm" href="rh.html" style="color:var(--ok-fg)">{ico("play")}<span style="color:var(--ink)">Démarrer ma journée</span></a>
-<button type="button" class="btn hide-sm">{ico("help")}<span>Aide</span></button>
-<button type="button" class="btn hide-sm" aria-label="Langue : français">{ico("globe")}<span>FR</span></button>
-<button type="button" class="btn btn-icon" aria-label="Notifications : 3 nouvelles">{ico("bell")}</button>
-<button type="button" class="btn btn-ghost" aria-label="Compte de Florian Bonnet" style="padding:0 6px"><span class="avatar">FB</span></button>
+<button type="button" class="btn hide-sm" data-action="clock">{ico("play")}<span>Démarrer ma journée</span></button>
+<button type="button" class="btn hide-sm" data-menu="aide">{ico("help")}<span>Aide</span></button>
+<button type="button" class="btn hide-sm" data-menu="lang" aria-label="Langue : français">{ico("globe")}<span>FR</span></button>
+<button type="button" class="btn btn-icon" data-menu="notifs" aria-label="Notifications : 3 nouvelles">{ico("bell")}</button>
+<button type="button" class="btn btn-ghost" data-menu="compte" aria-label="Compte de Florian Bonnet" style="padding:0 6px"><span class="avatar">FB</span></button>
 </header>
 <div class="page-head">
 <div class="head-row">
@@ -244,6 +260,7 @@ def shell(slug, title, sub, actions, body, tab_html='', back=None):
 </main>
 </div>
 </div>
+{dialogs}
 <script src="assets/app.js"></script>
 </body>
 </html>
@@ -254,12 +271,15 @@ PAGES = {}
 
 
 def page(file, *args, **kw):
-    PAGES[file] = shell(*args, **kw)
+    PAGES[file] = shell(*args, file=file, **kw)
 
 
 ST = {'prep': badge('En préparation', 'info'), 'exp': badge('Expédiée', 'ok'), 'liv': badge('Livrée', 'ok'),
       'att': badge('En attente'), 'ret': badge('En retard', 'danger'), 'bro': badge('Brouillon')}
 PAY = {'ok': badge('Payée', 'ok'), 'no': badge('Impayée', 'danger'), 'part': badge('Paiement partiel', 'warn')}
+
+import extra  # noqa: E402
+extra.register(globals())
 
 # ---------- 1. Tableau de bord ----------
 months = [('Déc', 188), ('Jan', 172), ('Fév', 196), ('Mar', 224), ('Avr', 205), ('Mai', 214), ('Juin', 238),
@@ -307,7 +327,7 @@ marge = (head('Marge brute', badge('À compléter', 'warn', False))
 page('index.html', 'dashboard', 'Bonjour Florian', 'Jeudi 19 novembre 2026 · 4 points demandent votre attention',
      '<div class="seg" role="group" aria-label="Période"><button aria-pressed="false">Jour</button><button aria-pressed="false">Semaine</button>'
      '<button aria-pressed="true">Mois</button><button aria-pressed="false">Personnalisé</button></div>'
-     + btn('Point de vente', icon='pos') + btn('Nouvelle commande', 'primary', 'plus', 'commande-nouvelle.html'),
+     + btn('Point de vente', icon='pos', href='ventes.html#onglet-5') + btn('Nouvelle commande', 'primary', 'plus', 'commande-nouvelle.html'),
      kpis([('Chiffre d’affaires HT', '128 400 €', '<span class="up">+8,3 %</span> vs octobre'),
            ('Encaissements', '112 900 €', '<span class="up">+3,0 %</span> · 78 % du facturé'),
            ('Reste à encaisser', '96 300 €', '<span class="late">38 % à plus de 90 jours</span>'),
@@ -356,7 +376,7 @@ vrows = [('CMD-11682', 'Facture provisoire', 'Dr Camille Renaud', 'Direct', '19 
          ('CMD-11674', 'FA-2611-0921', 'SCM Dentaire du Parc', 'Direct', '18 nov.', 'Échéance 18 déc.', 'exp', 'no', '942,10 €', 'Encaisser'),
          ('CMD-11673', 'FA-2611-0919', 'Cabinet Bellecour', 'Site internet', '17 nov.', 'Livrée le 18 nov.', 'liv', 'ok', '86,40 €', None)]
 page('ventes.html', 'ventes', 'Ventes', 'Devis, commandes, livraisons et factures au même endroit',
-     btn('Exporter', icon='down') + btn('Point de vente', icon='pos') + btn('Nouvelle commande', 'primary', 'plus', 'commande-nouvelle.html'),
+     btn('Exporter', icon='down') + btn('Point de vente', icon='pos', href='ventes.html#onglet-5') + btn('Nouvelle commande', 'primary', 'plus', 'commande-nouvelle.html'),
      list_card(chips([('Toutes', 450, ''), ('Brouillons', 14, ''), ('En attente', 129, ''), ('En préparation', 148, ''), ('Expédiées', 397, ''), ('Livrées', 310, ''), ('En retard', 237, 'alert')])
                + filters('N° de commande, facture, client ou produit', ['Période : ce mois', 'Canal : tous', 'Paiement : tous']),
                table(['Commande', 'Client', 'Date', 'Statut', 'Paiement', ('Montant TTC', 'r'), ('Prochaine action', 'r')],
@@ -364,7 +384,7 @@ page('ventes.html', 'ventes', 'Ventes', 'Devis, commandes, livraisons et facture
                       for r, f, cl, ca, d, e, s, p, m, a in vrows], check=True, name='la commande'),
                pager('1 à 10 sur 450 commandes ce mois', 'Page 1 sur 45'))
      + bulkbar('Expédier', ['Imprimer les bons', 'Générer les factures', 'Exporter']),
-     tabs([('Devis', '38'), ('Commandes', '450'), ('Bons de livraison', '397'), ('Factures', '426'), ('Avoirs', '12')], 1))
+     tabs([('Devis', '38'), ('Commandes', '450'), ('Bons de livraison', '397'), ('Factures', '426'), ('Avoirs', '12'), 'Point de vente'], 1))
 
 # ---------- 5. Nouvelle commande (formulaire) ----------
 lines = table(['Produit', ('Quantité', 'r'), ('Prix unitaire HT', 'r'), ('Remise', 'r'), ('Total HT', 'r'), ''],
@@ -405,7 +425,7 @@ page('clients.html', 'clients', 'Clients', '19 464 clients actifs', btn('Exporte
      + list_card(chips([('Tous', '19 464', ''), ('À jour', '18 728', ''), ('Léger', 412, ''), ('Modéré', 282, ''), ('Élevé', 31, ''), ('Critique', 11, 'alert')], 'Filtrer par niveau d’encours')
                  + filters('Nom, code client, ville, téléphone ou e-mail', ['Type : tous', 'Commercial : tous', 'Tag : tous']),
                  table(['Client', 'Ville', 'Téléphone', 'Dernière commande', ('Encours', 'r'), 'Risque', ('Action', 'r')],
-                       [[f'<a href="#">{n}</a><small>{k}</small>', v, f'<span class="num">{t}</span>', d, f'<b>{e}</b>', risk[r], acts('Commander')] for n, k, v, t, d, e, r in crows],
+                       [[f'<a href="client-fiche.html">{n}</a><small>{k}</small>', v, f'<span class="num">{t}</span>', d, f'<b>{e}</b>', risk[r], acts('Commander')] for n, k, v, t, d, e, r in crows],
                        check=True, name='le client'), pager('1 à 8 sur 19 464 clients', 'Page 1 sur 2 433'))
      + bulkbar('Envoyer une relance', ['Ajouter un tag', 'Exporter']),
      tabs([('Clients', '19 464'), 'Tags']))
@@ -560,7 +580,7 @@ page('documents.html', 'docs', 'Documents', 'Dossiers, conventions, attestations
 
 # ---------- 18. Ressources humaines ----------
 pause = lambda l, v: item(l, v, btn('Démarrer', sm=True), soft=True)
-page('rh.html', 'rh', 'Ressources humaines', 'Présence, absences et dossiers de l’équipe', btn('Demander une absence', icon='plus') + btn('Démarrer ma journée', 'primary', 'play'),
+page('rh.html', 'rh', 'Ressources humaines', 'Présence, absences et dossiers de l’équipe', btn('Demander une absence', icon='plus') + btn('Démarrer ma journée', 'primary', 'play', attrs='data-action="clock"'),
      '<div class="banner info">' + ico('clock') + '<p><b>Vous n’avez pas encore pointé aujourd’hui.</b> Il est 14 h 38 · 7 h 00 attendues.</p></div>'
      + kpis([('Temps de travail', '0 h 00', 'Sur 7 h 00 attendues'), ('Pauses', '0 h 00', 'La pause déjeuner est déduite automatiquement'), ('Retard', '0 h 00', 'Aucun retard ce mois'), ('Congés payés', '25 jours', 'RTT : 0 jour')])
      + '<div class="grid">' + card(head('Pauses du jour') + '<div class="list">' + pause('Déjeuner', '0 h 00') + pause('Café du matin', '0 sur 15 min') + pause('Café de l’après-midi', '0 sur 15 min') + pause('Brief ou réunion', '0 h 00') + '</div>')

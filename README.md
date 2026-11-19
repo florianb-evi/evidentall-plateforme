@@ -1,6 +1,6 @@
 # Evidentall — maquette de la refonte UI/UX
 
-Maquette codée (HTML, CSS, JavaScript, sans framework) des 17 modules de la plateforme, plus le formulaire « Nouvelle commande ». Elle sert de référence pour l'intégration : structure des pages, composants, couleurs et surtout **emplacement des boutons importants**.
+Maquette codée et cliquable (HTML, CSS, JavaScript, sans framework) des 17 modules de la plateforme et de leurs onglets, plus le formulaire « Nouvelle commande », la fiche client et les paramètres. Elle sert de référence pour l'intégration : structure des pages, composants, couleurs et surtout **emplacement des boutons importants**.
 
 Toutes les données affichées sont fictives.
 
@@ -54,6 +54,7 @@ Sur mobile (moins de 900 px), le menu devient un tiroir et l'action principale d
 
 - `assets/app.css` : couleurs de la charte, composants et règles de collage (`position: sticky`). Les variables sont en tête du fichier.
 - `assets/app.js` : en-tête compact au défilement, barre d'actions groupées, menu réductible, raccourci Ctrl K.
+- `tools/extra.py` : onglets secondaires, fenêtres de création, fiche client et paramètres.
 - `tools/build.py` : génère les pages. Le menu, la barre supérieure et l'en-tête sont définis une seule fois ; modifiez ce fichier puis lancez `python3 tools/build.py`.
 
 ## Charte
@@ -63,8 +64,37 @@ Sur mobile (moins de 900 px), le menu devient un tiroir et l'action principale d
 - Le bouton principal est en bleu marine `#032444` : le texte blanc sur `#0077FD` n'atteint pas le contraste recommandé pour du texte courant. Le bleu `#0077FD` sert aux graphiques, aux onglets actifs et aux accents.
 - Vert, orange et rouge sont réservés aux statuts (payé, à valider, en retard) et toujours accompagnés d'un libellé.
 
+## Ce qui est cliquable
+
+Tout bouton, onglet ou lien de la maquette réagit. Rien n'est enregistré : les actions affichent un message « (simulation) ».
+
+| Élément | Comportement |
+| --- | --- |
+| Onglets | Changent de contenu ; l'adresse garde l'onglet (`ventes.html#onglet-3`) et l'action principale de l'en-tête suit l'onglet (« Nouvelle facture », « Nouveau fournisseur »…) |
+| Boutons de création | Ouvrent une fenêtre avec le formulaire, boutons « Annuler » et de validation collés en bas |
+| Référence d'une ligne (CMD-…, FA-…) | Ouvre un panneau de détail à droite, actions collées en bas |
+| Bouton « … » d'une ligne | Menu : Voir le détail, Modifier, Dupliquer, Imprimer, Supprimer (avec confirmation) |
+| Pastilles de statut, recherche, filtres | Filtrent réellement les lignes du tableau |
+| Cases à cocher | Font apparaître la barre d'actions groupées |
+| Recherche globale ou Ctrl K | Ouvre un accès rapide aux pages |
+| Aide, langue, notifications, compte, société | Menus déroulants |
+| Démarrer ma journée | Bascule en « Terminer ma journée » sur toutes les pages |
+
+Pages ajoutées : `parametres.html` (12 onglets) et `client-fiche.html` (fiche client, ouverte depuis la liste des clients).
+
+Test automatique : `python3` + Playwright cliquent chaque élément visible de chaque page et de chaque onglet (1 214 clics) ; aucun n'est resté sans effet, hors éléments déjà actifs.
+
+## Constats relevés sur la plateforme actuelle
+
+- `/billing` ouvert sans paramètre affiche « Impossible d'afficher la page » ; seul le lien du tableau de bord, avec ses paramètres, fonctionne.
+- Les onglets de Produits et d'Expéditions sont de simples boutons, contrairement aux autres modules : le clavier et les lecteurs d'écran ne les traitent pas comme des onglets.
+- L'onglet Factures affiche six boutons d'action de même poids (fusion PDF, résumé des impayés, envoi des impayés, statistiques, export, envoi de la sélection). La maquette en garde deux en évidence et passe le reste en actions groupées.
+- Les tableaux d'Achats ont un filtre « Contient / Égal à » dans chaque en-tête de colonne. La maquette les remplace par une recherche et des pastilles de statut.
+- Le Comparateur de prix affiche les erreurs techniques brutes (HTTP 403, adresses complètes). La maquette les résume en une phrase avec un bouton « Voir le détail technique ».
+- Les Paramètres comptent 12 onglets sur deux lignes ; la maquette les met sur une ligne défilante.
+
 ## Limites
 
-- Les onglets secondaires de chaque module (par exemple Factures, Avoirs, Stock et lots) ne sont pas maquettés : seul l'onglet principal l'est.
-- Les menus déroulants, fenêtres modales et la page Paramètres ne sont pas maquettés.
+- Les formulaires de création n'ont pas été ouverts sur la plateforme réelle, pour ne créer aucun brouillon : leurs champs sont déduits des colonnes des tableaux et restent à valider.
+- Les données sont fictives et les actions simulées.
 - Les renommages (Cockpit → Messagerie, GED → Documents, Produits → Produits et stock) sont des propositions.
