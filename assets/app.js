@@ -252,6 +252,14 @@
     if (act === 'clear') { clearChecks(); return; }
     if (act === 'drawer-close') { drawer.classList.remove('is-on'); return; }
     if (act === 'palette') { e.preventDefault(); openPalette(); return; }
+    if (act === 'theme') {
+      var dark = root.dataset.theme !== 'dark';
+      if (dark) root.dataset.theme = 'dark'; else delete root.dataset.theme;
+      try { localStorage.setItem('ev-theme', dark ? 'dark' : 'light'); } catch (err) { /* stockage indisponible */ }
+      el.setAttribute('aria-label', dark ? 'Activer le mode jour' : 'Activer le mode nuit');
+      toast(dark ? 'Mode nuit activé' : 'Mode jour activé');
+      return;
+    }
     if (act === 'clock') {
       clocked = !clocked;
       try { localStorage.setItem('ev-clock', clocked ? '1' : '0'); } catch (err) { /* stockage indisponible */ }

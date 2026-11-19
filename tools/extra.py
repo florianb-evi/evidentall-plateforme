@@ -283,7 +283,7 @@ def register(h):
 
     save = '<div class="savebar"><span class="muted">Aucune modification en attente</span>' + btn('Annuler', 'ghost') + btn('Enregistrer', 'primary', 'check') + '</div>'
     general = (form('Informations de l’établissement', ['Nom de l’établissement*', 'Forme juridique', 'Adresse=', 'Code postal', 'Ville', 'Téléphone@tel', 'E-mail@email', 'Nom du gérant', 'SIREN', 'SIRET', 'N° de TVA intracommunautaire', 'Code APE'])
-               + card(head('Logo', btn('Choisir un logo', sm=True, icon='upload')) + '<img src="assets/logo-bleus.svg" alt="Logo actuel" width="196" height="57"><p class="muted">Affiché sur vos devis, factures et bons de livraison.</p>') + save)
+               + card(head('Logo', btn('Choisir un logo', sm=True, icon='upload')) + '<img class="when-light" src="assets/logo-bleus.svg" alt="Logo actuel" width="196" height="57"><img class="when-dark" src="assets/logo-blanc-bleu.svg" alt="Logo actuel" width="196" height="57"><p class="muted">Affiché sur vos devis, factures et bons de livraison.</p>') + save)
     users = lst('Nom ou e-mail', ['Utilisateur', 'Rôle', 'Dernière connexion', 'Statut', ('Action', 'r')], [
         [ref('Florian Bonnet', 'florian@votre-societe.example'), 'Administrateur', 'Aujourd’hui', badge('Actif', 'ok'), acts('Modifier', '')],
         [ref('Préparation commandes', 'preparation@votre-societe.example'), 'Préparateur', 'Hier', badge('Actif', 'ok'), acts('Modifier', '')],

@@ -62,6 +62,7 @@ Sur mobile (moins de 900 px), le menu devient un tiroir et l'action principale d
 - Logo : `assets/logo-bleus.svg` sur fond clair (utilisé dans le menu), `assets/logo-blanc-bleu.svg` sur fond bleu ou bleu marine. Ce sont vos fichiers d'origine, recadrés au plus près du dessin. `assets/logo-symbole.svg` est un recadrage sur « all » et le sourire, pour le menu réduit et l'icône d'onglet.
 - Principale `#0077FD`, secondaire `#032444`, accompagnante `#50C3FF`, police Montserrat.
 - Le bouton principal est en bleu marine `#032444` : le texte blanc sur `#0077FD` n'atteint pas le contraste recommandé pour du texte courant. Le bleu `#0077FD` sert aux graphiques, aux onglets actifs et aux accents.
+- Mode nuit : bouton lune de la barre supérieure, choix mémorisé dans le navigateur. Toutes les couleurs sont des variables CSS redéfinies sous `[data-theme="dark"]` dans `assets/app.css` ; le logo passe à la version blanc-bleu.
 - Vert, orange et rouge sont réservés aux statuts (payé, à valider, en retard) et toujours accompagnés d'un libellé.
 
 ## Ce qui est cliquable

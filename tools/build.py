@@ -53,6 +53,8 @@ ICONS = {
     'back': 'M15 6l-9 6 9 6',
     'globe': 'M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM3 12h18M12 3c2.5 2.5 3.5 5.5 3.5 9s-1 6.5-3.5 9c-2.5-2.5-3.5-5.5-3.5-9s1-6.5 3.5-9z',
     'stop': 'M6 6h12v12H6z',
+    'moon': 'M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z',
+    'sun': 'M12 17a5 5 0 1 0 0-10 5 5 0 0 0 0 10zM12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5L19 19M5 19l1.5-1.5M17.5 6.5L19 5',
 }
 
 NAV = [
@@ -131,7 +133,7 @@ def chips(items, label='Filtrer par statut'):
 
 
 def filters(placeholder, selects=(), more=True):
-    out = (f'<label class="search" style="flex:2 1 260px;max-width:none;background:#fff">{ico("search")}'
+    out = (f'<label class="search" style="flex:2 1 260px;max-width:none;background:var(--surface)">{ico("search")}'
            f'<input type="search" aria-label="Rechercher" placeholder="{placeholder}"></label>')
     for s in selects:
         out += f'<button type="button" class="btn" style="flex:1 1 150px;justify-content:space-between">{s}{ico("filter")}</button>'
@@ -224,12 +226,13 @@ def shell(slug, title, sub, actions, body, tab_html='', back=None, file=None):
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap">
 <link rel="icon" type="image/svg+xml" href="assets/logo-symbole.svg">
 <link rel="stylesheet" href="assets/app.css">
+<script>try{{if(localStorage.getItem("ev-theme")==="dark")document.documentElement.dataset.theme="dark"}}catch(e){{}}</script>
 </head>
 <body>
 <a class="sr" href="#contenu">Aller au contenu</a>
 <div class="app">
 <aside class="side">
-<a class="logo" href="index.html" aria-label="Evidentall, tableau de bord"><img class="full" src="assets/logo-bleus.svg" alt="Evidentall, le pilotage intelligent" width="196" height="57"><img class="mark" src="assets/logo-symbole.svg" alt="" width="40" height="44"></a>
+<a class="logo" href="index.html" aria-label="Evidentall, tableau de bord"><img class="full when-light" src="assets/logo-bleus.svg" alt="Evidentall, le pilotage intelligent" width="196" height="57"><img class="full when-dark" src="assets/logo-blanc-bleu.svg" alt="Evidentall, le pilotage intelligent" width="196" height="57"><img class="mark" src="assets/logo-symbole.svg" alt="" width="40" height="44"></a>
 <button type="button" class="org" data-menu="org">{ico("globe")}<span><small>Société active</small><b>Votre société</b></span></button>
 <nav class="nav" aria-label="Navigation principale" style="display:flex;flex-direction:column;gap:16px">{nav}</nav>
 <div class="side-foot nav">
@@ -245,6 +248,7 @@ def shell(slug, title, sub, actions, body, tab_html='', back=None, file=None):
 <button type="button" class="btn hide-sm" data-action="clock">{ico("play")}<span>Démarrer ma journée</span></button>
 <button type="button" class="btn hide-sm" data-menu="aide">{ico("help")}<span>Aide</span></button>
 <button type="button" class="btn hide-sm" data-menu="lang" aria-label="Langue : français">{ico("globe")}<span>FR</span></button>
+<button type="button" class="btn btn-icon" data-action="theme" aria-label="Activer le mode nuit" title="Mode nuit"><span class="when-light">{ico("moon")}</span><span class="when-dark">{ico("sun")}</span></button>
 <button type="button" class="btn btn-icon" data-menu="notifs" aria-label="Notifications : 3 nouvelles">{ico("bell")}</button>
 <button type="button" class="btn btn-ghost" data-menu="compte" aria-label="Compte de Florian Bonnet" style="padding:0 6px"><span class="avatar">FB</span></button>
 </header>
